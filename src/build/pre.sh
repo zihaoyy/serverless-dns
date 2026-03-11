@@ -79,7 +79,7 @@ do
         echo "=x== pre.sh: no op ${out}"
         exit 0
     else
-        wget $wgetopts -q "${burl}/${yyyy}/${dir}/${mm}-${wk}/${codec}/${f}" -O "${out}"
+        deno eval "const r = await fetch('${burl}/${yyyy}/${dir}/${mm}-${wk}/${codec}/${f}'); if(!r.ok) Deno.exit(1); await Deno.writeFile('${out}', new Uint8Array(await r.arrayBuffer()));"
         wcode=$?
 
         if [ $wcode -eq 0 ]; then
@@ -90,7 +90,7 @@ do
                 fulltimestamp=$(cut -d"," -f8 "$out" | cut -d":" -f2 | tr -dc '0-9/')
             fi
             echo "==x= pre.sh: $i ok $wcode; filetag? ${fulltimestamp}"
-            wget $wgetopts -q "${burl}/${fulltimestamp}/${codec}/${f2}" -O "${out2}"
+            deno eval "const r = await fetch('${burl}/${fulltimestamp}/${codec}/${f2}'); if(!r.ok) Deno.exit(1); await Deno.writeFile('${out2}', new Uint8Array(await r.arrayBuffer()));"
             wcode2=$?
             if [ $wcode2 -eq 0 ]; then
               echo "===x pre.sh: $i filetag ok $wcode2"
